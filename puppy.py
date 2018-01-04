@@ -1,6 +1,7 @@
 import queue
 import time
 import threading
+from pprint import pprint
 
 
 class Publisher(object):
@@ -32,14 +33,22 @@ class SubscriberPull(object):
             return None
 
 class Topic(object):
-    def __init__(self,name):
+    def __init__(self,name,parent=None):
         self.name = name
         self.sub = []
+        self.parent = parent
 
     def send(self,data):
-        #print("Topic '{0}' received: {1}".format(self.name,data))
+        print("Topic '{0}' received: {1}".format(self.name,data))
         for s in self.sub:
-            s.send(data)
+            t = threading.Thread(target=s.send,
+                                 args=(data,))
+            t.daemon = False
+            t.start()
+            t = None
+
+        if self.parent:
+            self.parent.send(data)
 
     def addSubPush(self,f):
         self.sub.append(SubscriberPush(f))
@@ -47,30 +56,47 @@ class Topic(object):
     def addSubPull(self,s):
         self.sub.append(s)
 
+def sanitizeTopic(topic,delim):
+    if type(topic) != type([]):
+        topic = [topic]
+
+    return [e.strip().strip(delim) for e in topic]
+
+def getParentChild(topic,delim):
+    t = [e for e in topic.split(delim) if e != '']
+
+    temp = []
+    for i in range(len(t)):
+        temp.append((delim.join(t[:i]),
+                     delim.join(t[:i+1])))
+
+    return temp
+
 class Puppy(object):
-    def __init__(self):
-        self.topic = {}
+    def __init__(self,delim='/'):
+        self.delim = delim # TODO: implement subtopics: 'aaa/bbb/ccc', etc
+
+        self.topic = {'':Topic('')}
 
     def Pub(self,topic):
-        if type(topic) != type([]):
-            topic = [topic]
+        topic = sanitizeTopic(topic,self.delim)
 
         for t in topic:
-            if t not in self.topic.keys():
-                self.topic[t] = Topic(t)
+            for a,b in getParentChild(t,self.delim):
+                if b not in self.topic.keys():
+                    self.topic[b] = Topic(name=b,
+                                          parent=self.topic[a])
 
         return Publisher(self,topic)
 
     def SubPush(self,topic,f):
-        if type(topic) != type([]):
-            topic = [topic]
+        topic = sanitizeTopic(topic,self.delim)
 
         for t in topic:
             self.topic[t].addSubPush(f)
 
     def SubPull(self,topic):
-        if type(topic) != type([]):
-            topic = [topic]
+        topic = sanitizeTopic(topic,self.delim)
 
         s = SubscriberPull()
         for t in topic:
@@ -79,8 +105,7 @@ class Puppy(object):
         return s
 
     def inject(self,topic,data):
-        if type(topic) != type([]):
-            topic = [topic]
+        topic = sanitizeTopic(topic,self.delim)
 
         for t in topic:
             assert(type(t) == str)
@@ -90,7 +115,7 @@ class Puppy(object):
         # check that all topics have both publishers and subscribers
         pass
 
-
+'''
 def f(data):
     print("'f' received: {0}".format(repr(data)))
 
@@ -101,15 +126,23 @@ def h(data):
     print("'h' received: {0}".format(repr(data)))
 
 puppy = Puppy()
-pub1 = puppy.Pub(['topic1','topic2'])
+pub1 = puppy.Pub(['topic1/sub1','topic2/sub2'])
+pub2 = puppy.Pub(['topic1','topic2','topic2'])
 
-puppy.SubPush('topic1',f)
-sub1 = puppy.SubPull('topic2')
+
+puppy.SubPush('',f)
+#puppy.SubPush('topic1',g)
+#puppy.SubPush('topic1/sub1',h)
+#sub1 = puppy.SubPull('topic2')
 
 pub1.send([1,2])
+pub2.send([1,2,3])
 
-print(sub1.recv())
-print(sub1.recv())
+#print(sub1.recv())
+#print(sub1.recv())
+'''
+
+
 
 
 
