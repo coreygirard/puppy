@@ -1,6 +1,10 @@
 # puppy
 A featherweight pub/sub architecture genetically engineered to make your project simpler, not more complicated. And to be adorable.
 
+### What's in a name?
+
+Publisher&#8211;Subscriber + Python &#8594; Pub/Sub + .py &#8594; Pub + py &#8594;  ***puppy***
+
 
 ## Hello World
 
@@ -23,6 +27,8 @@ print(sub.recvAll())
 
 
 For those unfamiliar with the Pub/Sub pattern, [Google](https://cloud.google.com/pubsub/docs/overview) and [Wikipedia](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) have pretty useful overviews.
+
+
 
 ## Basic
 
