@@ -32,6 +32,17 @@ class SubscriberPull(object):
         except:
             return None
 
+    def recvAll(self):
+        resp = []
+        while True:
+            e = self.recv()
+            if e == None:
+                break
+            else:
+                resp.append(e)
+        return resp
+
+
 class Topic(object):
     def __init__(self,name,parent=None):
         self.name = name
@@ -39,7 +50,7 @@ class Topic(object):
         self.parent = parent
 
     def send(self,data):
-        print("Topic '{0}' received: {1}".format(self.name,data))
+        #print("Topic '{0}' received: {1}".format(self.name,data))
         for s in self.sub:
             t = threading.Thread(target=s.send,
                                  args=(data,))
@@ -56,13 +67,35 @@ class Topic(object):
     def addSubPull(self,s):
         self.sub.append(s)
 
-def sanitizeTopic(topic,delim):
+def sanitizeTopics(topic,delim):
+    '''
+    >>> sanitizeTopics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
+
+    >>> sanitizeTopics(['aaa','aaa/','/aaa/','/aaa/bbb/'],'/')
+    ['aaa', 'aaa', 'aaa', 'aaa/bbb']
+
+    >>> sanitizeTopics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
+    '''
+
     if type(topic) != type([]):
         topic = [topic]
 
-    return [e.strip().strip(delim) for e in topic]
+    return [e.strip(delim) for e in topic]
 
 def getParentChild(topic,delim):
+    '''
+    >>> pc = getParentChild('aaa/bbb/ccc','/')
+    >>> pc == [('', 'aaa'),
+    ...        ('aaa', 'aaa/bbb'),
+    ...        ('aaa/bbb', 'aaa/bbb/ccc')]
+    True
+
+    >>> getParentChild('aaa','/')
+    [('', 'aaa')]
+    '''
+
     t = [e for e in topic.split(delim) if e != '']
 
     temp = []
@@ -78,132 +111,39 @@ class Puppy(object):
 
         self.topic = {'':Topic('')}
 
-    def Pub(self,topic):
-        topic = sanitizeTopic(topic,self.delim)
+    def Pub(self,topics):
+        topics = sanitizeTopics(topics,self.delim)
 
-        for t in topic:
+        for t in topics:
             for a,b in getParentChild(t,self.delim):
                 if b not in self.topic.keys():
                     self.topic[b] = Topic(name=b,
                                           parent=self.topic[a])
 
-        return Publisher(self,topic)
+        return Publisher(self,topics)
 
-    def SubPush(self,topic,f):
-        topic = sanitizeTopic(topic,self.delim)
+    def SubPush(self,topics,f):
+        topics = sanitizeTopics(topics,self.delim)
 
-        for t in topic:
+        for t in topics:
             self.topic[t].addSubPush(f)
 
-    def SubPull(self,topic):
-        topic = sanitizeTopic(topic,self.delim)
+    def SubPull(self,topics):
+        topics = sanitizeTopics(topics,self.delim)
 
         s = SubscriberPull()
-        for t in topic:
+        for t in topics:
             self.topic[t].addSubPull(s)
 
         return s
 
-    def inject(self,topic,data):
-        topic = sanitizeTopic(topic,self.delim)
+    def inject(self,topics,data):
+        topics = sanitizeTopics(topics,self.delim)
 
-        for t in topic:
+        for t in topics:
             assert(type(t) == str)
             self.topic[t].send(data)
 
     def verify(self):
         # check that all topics have both publishers and subscribers
         pass
-
-'''
-def f(data):
-    print("'f' received: {0}".format(repr(data)))
-
-def g(data):
-    print("'g' received: {0}".format(repr(data)))
-
-def h(data):
-    print("'h' received: {0}".format(repr(data)))
-
-puppy = Puppy()
-pub1 = puppy.Pub(['topic1/sub1','topic2/sub2'])
-pub2 = puppy.Pub(['topic1','topic2','topic2'])
-
-
-puppy.SubPush('',f)
-#puppy.SubPush('topic1',g)
-#puppy.SubPush('topic1/sub1',h)
-#sub1 = puppy.SubPull('topic2')
-
-pub1.send([1,2])
-pub2.send([1,2,3])
-
-#print(sub1.recv())
-#print(sub1.recv())
-'''
-
-
-
-
-
-
-
-'''
-
-class Puppy(object):
-    def __init__(self,kill=None):
-        self.toPuppy = queue.Queue()
-
-        if not kill:
-            self.kill = lambda i : i[0] == 'kill'
-        else:
-            self.kill = kill
-
-        self.q = {}
-
-        self.thread = threading.Thread(target=self.loop)
-        self.thread.daemon = False#True
-
-    def Pub(self,topic):
-        return Publisher()
-
-    def register(self,name,sub,f,topic='.'):
-        # TODO: support topics
-
-        assert(name not in self.q.keys())
-
-        d = {}
-        d['queue'] = queue.Queue()
-        d['func'] = f
-        d['thread'] = threading.Thread(target=sub,
-                                       args=(d['queue'],
-                                             self.toPuppy))
-        d['thread'].daemon = True
-        d['thread'].start()
-
-
-        self.q[name] = d
-
-    def start(self):
-        self.thread.start()
-
-    def inject(self,data):
-        self.toPuppy.put(data)
-
-    def loop(self):
-        while True:
-            item = self.toPuppy.get()
-
-            try:
-                if self.kill(item):
-                    break
-            except:
-                pass
-
-            for v in self.q.values():
-                try:
-                    if v['func'](item):
-                        v['queue'].put(item)
-                except:
-                    pass
-'''
