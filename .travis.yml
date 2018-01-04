@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.6"
+script: coverage run test_puppy.py
+before_install:
+  pip install codecov coverage
+after_success:
+  codecov --token=
