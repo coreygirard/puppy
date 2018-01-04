@@ -1,22 +1,3 @@
-'''
-import time
-from puppy import Puppy
-
-def f(e):
-    print(e)
-
-p = Puppy()
-
-pub = p.Pub('topicA')
-p.SubPush('topicA',f)
-sub = p.SubPull('topicA')
-
-pub.send([1,2,3])
-
-time.sleep(1)
-print(sub.recv())
-'''
-
 import unittest
 import doctest
 import puppy
@@ -141,6 +122,11 @@ class TestPushSubscribe(unittest.TestCase):
         pub.send('world')
         self.assertEqual(latch.value,'world')
 
+
+class TestVerify(unittest.TestCase):
+    def test_verify(self):
+        pupper = puppy.Puppy()
+        pupper.verify()
 
 
 

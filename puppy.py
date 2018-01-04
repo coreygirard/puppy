@@ -51,7 +51,14 @@ class Topic(object):
 
     def send(self,data):
         #print("Topic '{0}' received: {1}".format(self.name,data))
-        for s in self.sub:
+        for s,f in self.sub:
+            if f != None:
+                try:
+                    if f(data) == False:
+                        continue
+                except:
+                    continue
+
             t = threading.Thread(target=s.send,
                                  args=(data,))
             t.daemon = False
@@ -61,11 +68,11 @@ class Topic(object):
         if self.parent:
             self.parent.send(data)
 
-    def addSubPush(self,f):
-        self.sub.append(SubscriberPush(f))
+    def addSubPush(self,f,filter=None):
+        self.sub.append((SubscriberPush(f),filter))
 
-    def addSubPull(self,s):
-        self.sub.append(s)
+    def addSubPull(self,s,filter=None):
+        self.sub.append((s,filter))
 
 def sanitizeTopics(topic,delim):
     '''
@@ -122,18 +129,18 @@ class Puppy(object):
 
         return Publisher(self,topics)
 
-    def SubPush(self,topics,f):
+    def SubPush(self,topics,f,filter=None):
         topics = sanitizeTopics(topics,self.delim)
 
         for t in topics:
-            self.topic[t].addSubPush(f)
+            self.topic[t].addSubPush(f,filter)
 
-    def SubPull(self,topics):
+    def SubPull(self,topics,filter=None):
         topics = sanitizeTopics(topics,self.delim)
 
         s = SubscriberPull()
         for t in topics:
-            self.topic[t].addSubPull(s)
+            self.topic[t].addSubPull(s,filter)
 
         return s
 
