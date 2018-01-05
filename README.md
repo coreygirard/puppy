@@ -33,7 +33,11 @@ print(sub.recvAll())
 
 For those unfamiliar with the Pub/Sub pattern, [Google](https://cloud.google.com/pubsub/docs/overview) and [Wikipedia](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) have pretty useful overviews.
 
+## Installation
 
+```
+pip install puppy # not yet
+```
 
 ## Basic
 
