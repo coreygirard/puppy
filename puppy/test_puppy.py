@@ -1,5 +1,6 @@
 import unittest
 import doctest
+import time
 import puppy
 
 
@@ -118,8 +119,10 @@ class TestPushSubscribe(unittest.TestCase):
 
         self.assertEqual(latch.value,None)
         pub.send('hello')
+        time.sleep(0.1)
         self.assertEqual(latch.value,'hello')
         pub.send('world')
+        time.sleep(0.1)
         self.assertEqual(latch.value,'world')
 
 class TestFilter(unittest.TestCase):
