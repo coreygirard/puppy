@@ -122,6 +122,21 @@ class TestPushSubscribe(unittest.TestCase):
         pub.send('world')
         self.assertEqual(latch.value,'world')
 
+class TestFilter(unittest.TestCase):
+    def test_filter(self):
+        pupper = puppy.Puppy()
+
+        pub = pupper.Pub('topic1')
+
+        sub = pupper.SubPull('topic1',
+                             filter=lambda i : i[2] == 'c')
+
+        pub.send('ab')
+        pub.send('abc')
+        pub.send('abd')
+        pub.send('abcd')
+        self.assertEqual(sub.recvAll(),['abc','abcd'])
+
 
 class TestVerify(unittest.TestCase):
     def test_verify(self):
