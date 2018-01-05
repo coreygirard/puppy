@@ -12,6 +12,7 @@ class TestBasic(unittest.TestCase):
         sub = pupper.SubPull('topic1')
 
         pub.send('hello')
+        time.sleep(0.1)
         self.assertEqual(sub.recv(),'hello')
         self.assertEqual(sub.recv(),None)
 
@@ -23,10 +24,12 @@ class TestRecvAll(unittest.TestCase):
         sub = pupper.SubPull('topic1')
 
         pub.send('hello')
+        time.sleep(0.1)
         self.assertEqual(sub.recvAll(),['hello'])
         self.assertEqual(sub.recvAll(),[])
 
         pub.send('world')
+        time.sleep(0.1)
         self.assertEqual(sub.recvAll(),['world'])
         self.assertEqual(sub.recvAll(),[])
 
@@ -40,6 +43,7 @@ class TestParenting(unittest.TestCase):
 
         pub.send('hello')
         pub.send('world')
+        time.sleep(0.1)
         self.assertEqual(subC.recvAll(),['hello','world'])
         self.assertEqual(subP.recvAll(),['hello','world'])
         self.assertEqual(subC.recvAll(),[])
@@ -59,6 +63,7 @@ class TestParenting(unittest.TestCase):
         pub1.send('world-1')
         pub2.send('hello-2')
         pub2.send('world-2')
+        time.sleep(0.1)
         self.assertEqual(subC1.recvAll(),['hello-1','world-1'])
         self.assertEqual(subC1.recvAll(),[])
 
@@ -81,6 +86,7 @@ class TestMultiplePublishers(unittest.TestCase):
 
         pub1.send('hello')
         pub2.send('world')
+        time.sleep(0.1)
         self.assertEqual(sub.recvAll(),['hello','world'])
         self.assertEqual(sub.recvAll(),[])
 
@@ -93,6 +99,8 @@ class TestMultipleSubscribers(unittest.TestCase):
         sub2 = pupper.SubPull('topic1')
 
         pub.send('hello')
+        time.sleep(0.1)
+
         self.assertEqual(sub1.recvAll(),['hello'])
         self.assertEqual(sub1.recvAll(),[])
 
@@ -138,6 +146,7 @@ class TestFilter(unittest.TestCase):
         pub.send('abc')
         pub.send('abd')
         pub.send('abcd')
+        time.sleep(0.1)
         self.assertEqual(sub.recvAll(),['abc','abcd'])
 
 
