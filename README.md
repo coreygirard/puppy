@@ -383,3 +383,72 @@ time.sleep(1)
 print(sum(result.recvAll()))
 
 ```
+
+## Potential gotchas
+
+Subscribers do not receive any messages published to a topic before they subscribe. This is a feature.
+
+```python
+import puppy as pup
+
+puppy = pup.Puppy()
+
+pub = puppy.Pub('topic1')
+
+pub.send('hello')
+sub = puppy.SubPull('topic1')
+pub.send('world')
+
+print(sub.recvAll())
+```
+```
+['world']
+```
+
+Due to the asynchronous implementation, publishing and pull subscribing in very quick succession may not behave as expected:
+
+```python
+import puppy as pup
+
+puppy = pup.Puppy()
+
+pub = puppy.Pub('topic1')
+sub = puppy.SubPull('topic1')
+
+pub.send('hello')
+
+print(sub.recvAll()) # may return [], if message hasn't yet propagated
+```
+```python
+import time
+import puppy as pup
+
+puppy = pup.Puppy()
+
+pub = puppy.Pub('topic1')
+sub = puppy.SubPull('topic1')
+
+pub.send('hello')
+time.sleep(0.1)
+print(sub.recvAll()) # will [almost] definitely return ['hello']
+```
+
+
+## License
+
+[MIT](https://tldrlegal.com/license/mit-license)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
