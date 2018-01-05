@@ -1,6 +1,6 @@
 from setuptools import setup
 
-setup(name='puppy',
+setup(name='puppy-pubsub',
       version='0.1',
       description='Pub/Sub that makes your project simpler, not more complicated',
       long_description='A featherweight pub/sub architecture genetically engineered to make your project simpler, not more complicated. And to be adorable.',

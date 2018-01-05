@@ -36,7 +36,7 @@ For those unfamiliar with the Pub/Sub pattern, [Google](https://cloud.google.com
 ## Installation
 
 ```
-pip install puppy # not yet
+pip install puppy-pubsub
 ```
 
 ## Basic
@@ -103,13 +103,13 @@ Subscriber received: 'hello'   # pub -> topic2 -> exampleSubscriber
 
 Sometimes it's useful to have messages wait in the queue until requested. Puppy offers pull subscriptions as well. To register a pull subscriber, call `.SubPull()` on the `Puppy` object, with a `topics` argument. This returns a subscriber object. To check for messages, this object provides two methods:
 
-- `.recv()` is a non-blocking query that: 
-  - Returns `None` if no unread messages exist 
+- `.recv()` is a non-blocking query that:
+  - Returns `None` if no unread messages exist
   - Returns the oldest unread message if any exist
 
-- `.recvAll()` is a non-blocking query that: 
+- `.recvAll()` is a non-blocking query that:
   - Returns `[]` if no unread messages exist
-  - Returns a list of all unread messages if any exist, ordered from oldest to newest. 
+  - Returns a list of all unread messages if any exist, ordered from oldest to newest.
 
 Each subscriber has its own message queue, which can be consumed without affecting any other subscribers.
 
@@ -211,7 +211,7 @@ print(sub.recvAll())
 ['hello', 'world']
 ```
 
-The default delimiter is `/`, but arbitrary delimiters may be passed when constructing the `Puppy` object, eg, `.Puppy(delim='-')`. Behavior for passed delimiters of length greater than one is currently undefined, and may be quite surprising. 
+The default delimiter is `/`, but arbitrary delimiters may be passed when constructing the `Puppy` object, eg, `.Puppy(delim='-')`. Behavior for passed delimiters of length greater than one is currently undefined, and may be quite surprising.
 
 ```python
 import puppy as pup
@@ -322,10 +322,10 @@ pub = puppy.Pub('topic1')
 def f(n):
     if n%3 != 0:
         return False
-    
+
     if n%5 != 0:
         return False
-    
+
     return True
 
 sub = puppy.SubPull('topic1',
@@ -377,11 +377,9 @@ for n in range(1000):
 	pub.send(n)
 
 # make sure everything settles down
-time.sleep(1) 
+time.sleep(1)
 
 # receive everything from the 'filtered' topic and sum it
 print(sum(result.recvAll()))
 
 ```
-
-
