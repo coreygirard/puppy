@@ -1,8 +1,11 @@
-import queue
 import time
 import threading
 from pprint import pprint
 
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 class Publisher(object):
     def __init__(self,puppy,topic):
