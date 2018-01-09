@@ -5,7 +5,7 @@ from pprint import pprint
 try:
     import queue
 except ImportError:
-    import Queue as queue
+    import Queue as queue # Python2 support
 
 class Publisher(object):
     def __init__(self,puppy,topic):
@@ -16,11 +16,11 @@ class Publisher(object):
         self.puppy.inject(self.topic,data)
 
 class SubscriberPush(object):
-    def __init__(self,f):
-        self.f = f
+    def __init__(self,callback):
+        self.callback = callback
 
     def send(self,data):
-        self.f(data)
+        self.callback(data)
 
 class SubscriberPull(object):
     def __init__(self):
@@ -117,7 +117,9 @@ def getParentChild(topic,delim):
 
 class Puppy(object):
     def __init__(self,delim='/'):
-        self.delim = delim # TODO: implement subtopics: 'aaa/bbb/ccc', etc
+        assert(type(delim) == type('string'))
+        assert(len(delim) == 1)
+        self.delim = delim
 
         self.topic = {'':Topic('')}
 
