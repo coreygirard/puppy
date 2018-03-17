@@ -1,7 +1,7 @@
 # puppy
 
-[![Build Status](https://travis-ci.org/crgirard/puppy.svg?branch=master)](https://travis-ci.org/crgirard/puppy) <br>
-[![Codecov](https://img.shields.io/codecov/c/github/crgirard/puppy.svg)](https://codecov.io/gh/crgirard/puppy/)
+[![Build Status](https://travis-ci.org/crgirard/puppy.svg?branch=master)](https://travis-ci.org/coreygirard/puppy) <br>
+[![Codecov](https://img.shields.io/codecov/c/github/crgirard/puppy.svg)](https://codecov.io/gh/coreygirard/puppy/)
 
 
 A featherweight pub/sub architecture genetically engineered to make your project simpler, not more complicated. And to be adorable.
