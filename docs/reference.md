@@ -20,7 +20,7 @@ Creates and returns a `Puppy` object.
 
 Puppy.**Pub**(*topics*)
 
-Creates and returns a `Publisher` object linked to the parent `Puppy` instance. 
+Creates and returns a `Publisher` object linked to the parent `Puppy` instance.
 
 - `topics` is a string or list of strings, specifying which topics the `Publisher` should publish to.
 
@@ -30,9 +30,9 @@ Creates and returns a `Publisher` object linked to the parent `Puppy` instance.
 
 ---
 
-Puppy.**SubPush**(*topics,callback[,filter]*) 
+Puppy.**SubPush**(*topics,callback[,filter]*)
 
-Creates and returns a `SubscriberPush` object linked to the parent `Puppy` instance. 
+Creates and returns a `SubscriberPush` object linked to the parent `Puppy` instance.
 
 - `topics` is a string or list of strings, specifying which topics the `SubscriberPush` should receive messages from.
 
@@ -43,7 +43,7 @@ Creates and returns a `SubscriberPush` object linked to the parent `Puppy` insta
   - returning `False` will prevent message delivery
 
   - an error during execution will prevent message delivery
-  
+
   - any return value other than `False` (including *[falsey](https://stackoverflow.com/questions/39983695/what-is-truthy-and-falsy-in-python-how-is-it-different-from-true-and-false)* values) will allow message delivery
 
   - if unspecified, the default value is equivalent to `lambda x : True`
@@ -56,7 +56,7 @@ Creates and returns a `SubscriberPush` object linked to the parent `Puppy` insta
 
 Puppy.**SubPull**(*topics[,filter]*)
 
-Creates and returns a `SubscriberPull` object linked to the parent `Puppy` instance. 
+Creates and returns a `SubscriberPull` object linked to the parent `Puppy` instance.
 
 - `topics` behaves identically to the `topics` argument for **SubPush**
 
@@ -65,9 +65,4 @@ Creates and returns a `SubscriberPull` object linked to the parent `Puppy` insta
 **Methods**
 
 - `.recv()` returns the oldest unread message, or `None` if no unread messages exist
-- `.recvAll()` returns a list of all unread messages, ordered from `[oldest, ... , newest]`, or `[]` if no unread messages exist
-
-
-
-
-
+- `.recv_all()` returns a list of all unread messages, ordered from `[oldest, ... , newest]`, or `[]` if no unread messages exist

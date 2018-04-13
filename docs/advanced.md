@@ -51,9 +51,9 @@ sub = puppy.SubPull('topic1')
 pub1.send('hello')
 pub2.send('world')
 
-print(sub1.recvAll())
-print(sub2.recvAll())
-print(sub.recvAll())
+print(sub1.recv_all())
+print(sub2.recv_all())
+print(sub.recv_all())
 ```
 ```
 ['hello']
@@ -75,9 +75,9 @@ sub3 = puppy.SubPull('')
 
 pub1.send(42)
 
-print(sub1.recvAll())
-print(sub2.recvAll())
-print(sub3.recvAll())
+print(sub1.recv_all())
+print(sub2.recv_all())
+print(sub3.recv_all())
 ```
 ```
 42
@@ -101,9 +101,9 @@ sub = puppy.SubPull('')
 pub1.send('hello')
 pub2.send('world')
 
-print(sub1.recvAll())
-print(sub2.recvAll())
-print(sub.recvAll())
+print(sub1.recv_all())
+print(sub2.recv_all())
+print(sub.recv_all())
 ```
 ```
 ['hello']
@@ -132,7 +132,7 @@ pub1.send('hello')
 pub2.send('world')
 pub2.send('hey')
 
-print(sub.recvAll())
+print(sub.recv_all())
 ```
 ```
 ['hello', 'hey']
@@ -154,7 +154,7 @@ pub.send('abc')
 pub.send('abd')   # will return False from filter function
 pub.send('abcde')
 
-print(sub.recvAll())
+print(sub.recv_all())
 ```
 ```
 ['abc', 'abcde']
@@ -184,7 +184,7 @@ sub = puppy.SubPull('topic1',
 for n in range(50):
 	pub.send(n)
 
-print(sub.recvAll())
+print(sub.recv_all())
 ```
 ```
 [0, 15, 30, 45]
@@ -231,7 +231,7 @@ for n in range(1000):
 time.sleep(1)
 
 # receive everything from the 'filtered' topic and sum it
-print(sum(result.recvAll()))
+print(sum(result.recv_all()))
 
 ```
 
@@ -250,7 +250,7 @@ pub.send('hello')
 sub = puppy.SubPull('topic1')
 pub.send('world')
 
-print(sub.recvAll())
+print(sub.recv_all())
 ```
 ```
 ['world']
@@ -268,7 +268,7 @@ sub = puppy.SubPull('topic1')
 
 pub.send('hello')
 
-print(sub.recvAll()) # may return [], if message hasn't yet propagated
+print(sub.recv_all()) # may return [], if message hasn't yet propagated
 ```
 ```python
 import time
@@ -281,5 +281,5 @@ sub = puppy.SubPull('topic1')
 
 pub.send('hello')
 time.sleep(0.1)
-print(sub.recvAll()) # will [almost] definitely return ['hello']
+print(sub.recv_all()) # will [almost] definitely return ['hello']
 ```

@@ -66,7 +66,7 @@ Sometimes it's useful to have messages wait in the queue until requested. Puppy 
   - Returns `None` if no unread messages exist
   - Returns the oldest unread message if any exist
 
-- `.recvAll()` is a non-blocking query that:
+- `.recv_all()` is a non-blocking query that:
   - Returns `[]` if no unread messages exist
   - Returns a list of all unread messages if any exist, ordered from oldest to newest.
 
@@ -82,7 +82,7 @@ sub1 = puppy.SubPull('topic1')
 sub2 = puppy.SubPull('topic1')
 
 print(sub1.recv())
-print(sub2.recvAll())
+print(sub2.recv_all())
 
 pub.send('hello')
 pub.send('world')
@@ -91,8 +91,8 @@ print(sub1.recv())
 print(sub1.recv())
 print(sub1.recv())
 
-print(sub2.recvAll())
-print(sub2.recvAll())
+print(sub2.recv_all())
+print(sub2.recv_all())
 ```
 ```
 None

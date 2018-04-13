@@ -24,7 +24,7 @@ sub = puppy.SubPull('topic1')
 pub.send('hello')
 pub.send('world')
 
-print(sub.recvAll())
+print(sub.recv_all())
 ```
 ```
 ['hello', 'world']
@@ -61,18 +61,3 @@ pip install puppy-pubsub
 ## License
 
 [MIT](https://tldrlegal.com/license/mit-license)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
