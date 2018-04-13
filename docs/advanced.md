@@ -200,12 +200,12 @@ import time
 import puppy as pup
 
 class Filter(object):
-    def __init__(self,puppy):
+    def __init__(self, puppy):
         # publisher to the 'filtered' topic
         self.pub = puppy.Pub('filtered')
 
     # will receive push from the 'all' topic    
-    def recv(self,n):
+    def recv(self, n):
         if n%3 == 0:
             self.pub.send(n)
         elif n%5 == 0:
@@ -218,7 +218,7 @@ puppy = pup.Puppy()
 pub = puppy.Pub('all')
 
 f = Filter(puppy)
-puppy.SubPush('all',f.recv)
+puppy.SubPush('all', f.recv)
 
 # subscribe to the filtered results
 result = puppy.SubPull('filtered')

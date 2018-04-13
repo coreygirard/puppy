@@ -1,6 +1,5 @@
-import time
 import threading
-from pprint import pprint
+
 
 try:
     import queue

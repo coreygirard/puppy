@@ -10,7 +10,7 @@ import puppy as pup
 puppy = pup.Puppy()
 
 pub1 = puppy.Pub('topic1')
-pub2 = puppy.Pub(['topic1','topic2'])
+pub2 = puppy.Pub(['topic1', 'topic2'])
 
 ```
 
@@ -28,7 +28,7 @@ pub = puppy.Pub('topic1')
 def exampleSubscriber(data):
     print('Subscriber received: {0}'.format(repr(data))
 
-puppy.SubPush('topic1',exampleSubscriber)
+puppy.SubPush('topic1', exampleSubscriber)
 
 pub.send('hello')
 ```
@@ -42,13 +42,13 @@ It's important to note that the function is called once for each message on each
 import puppy as pup
 
 puppy = pup.Puppy()
-pub = puppy.Pub(['topic1','topic2'])
+pub = puppy.Pub(['topic1', 'topic2'])
 
 
 def exampleSubscriber(data):
     print('Subscriber received: {0}'.format(repr(data))
 
-puppy.SubPush(['topic1','topic2'],exampleSubscriber)
+puppy.SubPush(['topic1', 'topic2'],exampleSubscriber)
 
 pub.send('hello')
 ```

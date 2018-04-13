@@ -13,7 +13,7 @@ Creates and returns a `Puppy` object.
 - `.SubPush()`
 - `.SubPull()`
 
-- `.inject(topics,data)` is a testing/debugging method that injects the message `data` into the specified topic or list of topics
+- `.inject(topics, data)` is a testing/debugging method that injects the message `data` into the specified topic or list of topics
 - `.verify()` is a *currently unimplemented* method that will return a list of any topics which lack publishers and/or subscribers. To be used for automated verification of architectures, and possibly throwing errors when trying to publish to a topic with no subscribers or receive from a topic with no publishers
 
 ---
