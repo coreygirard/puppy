@@ -25,13 +25,13 @@ class TestRecvAll(unittest.TestCase):
 
         pub.send('hello')
         time.sleep(0.1)
-        self.assertEqual(sub.recvAll(),['hello'])
-        self.assertEqual(sub.recvAll(),[])
+        self.assertEqual(sub.recv_all(),['hello'])
+        self.assertEqual(sub.recv_all(),[])
 
         pub.send('world')
         time.sleep(0.1)
-        self.assertEqual(sub.recvAll(),['world'])
-        self.assertEqual(sub.recvAll(),[])
+        self.assertEqual(sub.recv_all(),['world'])
+        self.assertEqual(sub.recv_all(),[])
 
 class TestParenting(unittest.TestCase):
     def test_parenting(self):
@@ -44,10 +44,10 @@ class TestParenting(unittest.TestCase):
         pub.send('hello')
         pub.send('world')
         time.sleep(0.1)
-        self.assertEqual(subC.recvAll(),['hello','world'])
-        self.assertEqual(subP.recvAll(),['hello','world'])
-        self.assertEqual(subC.recvAll(),[])
-        self.assertEqual(subP.recvAll(),[])
+        self.assertEqual(subC.recv_all(),['hello','world'])
+        self.assertEqual(subP.recv_all(),['hello','world'])
+        self.assertEqual(subC.recv_all(),[])
+        self.assertEqual(subP.recv_all(),[])
 
     def test_multiple_children(self):
         pupper = puppy.Puppy()
@@ -64,14 +64,14 @@ class TestParenting(unittest.TestCase):
         pub2.send('hello-2')
         pub2.send('world-2')
         time.sleep(0.1)
-        self.assertEqual(subC1.recvAll(),['hello-1','world-1'])
-        self.assertEqual(subC1.recvAll(),[])
+        self.assertEqual(subC1.recv_all(),['hello-1','world-1'])
+        self.assertEqual(subC1.recv_all(),[])
 
-        self.assertEqual(subC2.recvAll(),['hello-2','world-2'])
-        self.assertEqual(subC2.recvAll(),[])
+        self.assertEqual(subC2.recv_all(),['hello-2','world-2'])
+        self.assertEqual(subC2.recv_all(),[])
 
-        self.assertEqual(subP.recvAll(),['hello-1','world-1','hello-2','world-2'])
-        self.assertEqual(subP.recvAll(),[])
+        self.assertEqual(subP.recv_all(),['hello-1','world-1','hello-2','world-2'])
+        self.assertEqual(subP.recv_all(),[])
 
 
 
@@ -87,8 +87,8 @@ class TestMultiplePublishers(unittest.TestCase):
         pub1.send('hello')
         pub2.send('world')
         time.sleep(0.1)
-        self.assertEqual(sub.recvAll(),['hello','world'])
-        self.assertEqual(sub.recvAll(),[])
+        self.assertEqual(sub.recv_all(),['hello','world'])
+        self.assertEqual(sub.recv_all(),[])
 
 class TestMultipleSubscribers(unittest.TestCase):
     def test_multipleSubscribers(self):
@@ -101,11 +101,11 @@ class TestMultipleSubscribers(unittest.TestCase):
         pub.send('hello')
         time.sleep(0.1)
 
-        self.assertEqual(sub1.recvAll(),['hello'])
-        self.assertEqual(sub1.recvAll(),[])
+        self.assertEqual(sub1.recv_all(),['hello'])
+        self.assertEqual(sub1.recv_all(),[])
 
-        self.assertEqual(sub2.recvAll(),['hello'])
-        self.assertEqual(sub2.recvAll(),[])
+        self.assertEqual(sub2.recv_all(),['hello'])
+        self.assertEqual(sub2.recv_all(),[])
 
 
 class Latch(object):
@@ -147,7 +147,7 @@ class TestFilter(unittest.TestCase):
         pub.send('abd')
         pub.send('abcd')
         time.sleep(0.1)
-        self.assertEqual(sub.recvAll(),['abc','abcd'])
+        self.assertEqual(sub.recv_all(),['abc','abcd'])
 
 
 class TestVerify(unittest.TestCase):

@@ -8,25 +8,25 @@ except ImportError:
     import Queue as queue # Python2 support
 
 class Publisher(object):
-    def __init__(self,puppy,topic):
+    def __init__(self, puppy, topic):
         self.puppy = puppy
         self.topic = topic
 
-    def send(self,data):
-        self.puppy.inject(self.topic,data)
+    def send(self, data):
+        self.puppy.inject(self.topic, data)
 
 class SubscriberPush(object):
-    def __init__(self,callback):
+    def __init__(self, callback):
         self.callback = callback
 
-    def send(self,data):
+    def send(self, data):
         self.callback(data)
 
 class SubscriberPull(object):
     def __init__(self):
         self.q = queue.Queue()
 
-    def send(self,data):
+    def send(self, data):
         self.q.put(data)
 
     def recv(self):
@@ -35,7 +35,7 @@ class SubscriberPull(object):
         except:
             return None
 
-    def recvAll(self):
+    def recv_all(self):
         resp = []
         while True:
             e = self.recv()
@@ -47,17 +47,16 @@ class SubscriberPull(object):
 
 
 class Topic(object):
-    def __init__(self,name,parent=None):
+    def __init__(self, name, parent=None):
         self.name = name
         self.sub = []
         self.parent = parent
 
-    def send(self,data):
-        #print("Topic '{0}' received: {1}".format(self.name,data))
-        for s,f in self.sub:
+    def send(self, data):
+        for s, f in self.sub:
             if f != None:
                 try:
-                    if f(data) == False:
+                    if f(data) is False:
                         continue
                 except:
                     continue
@@ -71,38 +70,38 @@ class Topic(object):
         if self.parent:
             self.parent.send(data)
 
-    def addSubPush(self,f,filter=None):
-        self.sub.append((SubscriberPush(f),filter))
+    def add_sub_push(self, f, filter=None):
+        self.sub.append((SubscriberPush(f), filter))
 
-    def addSubPull(self,s,filter=None):
-        self.sub.append((s,filter))
+    def add_sub_pull(self, s, filter=None):
+        self.sub.append((s, filter))
 
-def sanitizeTopics(topic,delim):
+def sanitize_topics(topic, delim):
     '''
-    >>> sanitizeTopics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    >>> sanitize_topics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
     ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
 
-    >>> sanitizeTopics(['aaa','aaa/','/aaa/','/aaa/bbb/'],'/')
+    >>> sanitize_topics(['aaa','aaa/','/aaa/','/aaa/bbb/'],'/')
     ['aaa', 'aaa', 'aaa', 'aaa/bbb']
 
-    >>> sanitizeTopics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    >>> sanitize_topics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
     ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
     '''
 
-    if type(topic) != type([]):
+    if not isinstance(topic, list):
         topic = [topic]
 
     return [e.strip(delim) for e in topic]
 
-def getParentChild(topic,delim):
+def get_parent_child(topic, delim):
     '''
-    >>> pc = getParentChild('aaa/bbb/ccc','/')
+    >>> pc = get_parent_child('aaa/bbb/ccc','/')
     >>> pc == [('', 'aaa'),
     ...        ('aaa', 'aaa/bbb'),
     ...        ('aaa/bbb', 'aaa/bbb/ccc')]
     True
 
-    >>> getParentChild('aaa','/')
+    >>> get_parent_child('aaa','/')
     [('', 'aaa')]
     '''
 
@@ -116,46 +115,46 @@ def getParentChild(topic,delim):
     return temp
 
 class Puppy(object):
-    def __init__(self,delim='/'):
-        assert(type(delim) == type('string'))
-        assert(len(delim) == 1)
+    def __init__(self, delim='/'):
+        assert isinstance(delim, str)
+        assert len(delim) == 1
         self.delim = delim
 
-        self.topic = {'':Topic('')}
+        self.topic = {'': Topic('')}
 
-    def Pub(self,topics):
-        topics = sanitizeTopics(topics,self.delim)
+    def Pub(self, topics):
+        topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
-            for a,b in getParentChild(t,self.delim):
+            for a, b in get_parent_child(t, self.delim):
                 if b not in self.topic.keys():
                     self.topic[b] = Topic(name=b,
                                           parent=self.topic[a])
 
-        return Publisher(self,topics)
+        return Publisher(self, topics)
 
-    def SubPush(self,topics,f,filter=None):
-        topics = sanitizeTopics(topics,self.delim)
+    def SubPush(self, topics, f, filter=None):
+        topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
-            self.topic[t].addSubPush(f,filter)
+            self.topic[t].add_sub_push(f, filter)
 
-    def SubPull(self,topics,filter=None):
-        topics = sanitizeTopics(topics,self.delim)
+    def SubPull(self, topics, filter=None):
+        topics = sanitize_topics(topics, self.delim)
 
         s = SubscriberPull()
         for t in topics:
-            self.topic[t].addSubPull(s,filter)
+            self.topic[t].add_sub_pull(s, filter)
 
         return s
 
-    def inject(self,topics,data):
-        topics = sanitizeTopics(topics,self.delim)
+    def inject(self, topics, data):
+        topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
-            assert(type(t) == str)
+            assert isinstance(t, str)
             self.topic[t].send(data)
 
     def verify(self):
-        # check that all topics have both publishers and subscribers
+        # TODO: check that all topics have both publishers and subscribers
         pass
