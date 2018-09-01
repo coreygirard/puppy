@@ -5,6 +5,7 @@ python:
 
 script: pipenv run coverage run puppy/test_puppy.py
 before_install:
+  pip install pipenv
   pipenv install
 after_success:
   codecov --token=
