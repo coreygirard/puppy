@@ -3,8 +3,8 @@ python:
   - "2.7"
   - "3.6"
 
-script: coverage run puppy/test_puppy.py
+script: pipenv run coverage run puppy/test_puppy.py
 before_install:
-  pip install codecov coverage
+  pipenv install
 after_success:
   codecov --token=
