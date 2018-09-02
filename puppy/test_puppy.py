@@ -1,111 +1,104 @@
-import unittest
-import doctest
 import time
 import puppy
 
 
-class TestBasic(unittest.TestCase):
-    def test_basic(self):
-        pupper = puppy.Puppy()
+def test_basic():
+    pupper = puppy.Puppy()
 
-        pub = pupper.Pub('topic1')
-        sub = pupper.SubPull('topic1')
+    pub = pupper.Pub('topic1')
+    sub = pupper.SubPull('topic1')
 
-        pub.send('hello')
-        time.sleep(0.1)
-        self.assertEqual(sub.recv(), 'hello')
-        self.assertEqual(sub.recv(), None)
-
-class TestRecvAll(unittest.TestCase):
-    def test_recv_all(self):
-        pupper = puppy.Puppy()
-
-        pub = pupper.Pub('topic1')
-        sub = pupper.SubPull('topic1')
-
-        pub.send('hello')
-        time.sleep(0.1)
-        self.assertEqual(sub.recv_all(), ['hello'])
-        self.assertEqual(sub.recv_all(), [])
-
-        pub.send('world')
-        time.sleep(0.1)
-        self.assertEqual(sub.recv_all(), ['world'])
-        self.assertEqual(sub.recv_all(), [])
-
-class TestParenting(unittest.TestCase):
-    def test_parenting(self):
-        pupper = puppy.Puppy()
-
-        pub = pupper.Pub('topic1')
-        subC = pupper.SubPull('topic1')
-        subP = pupper.SubPull('')
-
-        pub.send('hello')
-        pub.send('world')
-        time.sleep(0.1)
-        self.assertEqual(subC.recv_all(), ['hello', 'world'])
-        self.assertEqual(subP.recv_all(), ['hello', 'world'])
-        self.assertEqual(subC.recv_all(), [])
-        self.assertEqual(subP.recv_all(), [])
-
-    def test_multiple_children(self):
-        pupper = puppy.Puppy()
-
-        pub1 = pupper.Pub('topic1')
-        pub2 = pupper.Pub('topic2')
-
-        subC1 = pupper.SubPull('topic1')
-        subC2 = pupper.SubPull('topic2')
-        subP = pupper.SubPull('')
-
-        pub1.send('hello-1')
-        pub1.send('world-1')
-        pub2.send('hello-2')
-        pub2.send('world-2')
-        time.sleep(0.1)
-        self.assertEqual(subC1.recv_all(), ['hello-1', 'world-1'])
-        self.assertEqual(subC1.recv_all(), [])
-
-        self.assertEqual(subC2.recv_all(), ['hello-2', 'world-2'])
-        self.assertEqual(subC2.recv_all(), [])
-
-        self.assertEqual(subP.recv_all(), ['hello-1', 'world-1', 'hello-2', 'world-2'])
-        self.assertEqual(subP.recv_all(), [])
+    pub.send('hello')
+    time.sleep(0.1)
+    assert sub.recv() == 'hello'
+    assert sub.recv() is None
 
 
+def test_recv_all():
+    pupper = puppy.Puppy()
+
+    pub = pupper.Pub('topic1')
+    sub = pupper.SubPull('topic1')
+
+    pub.send('hello')
+    time.sleep(0.1)
+    assert sub.recv_all() == ['hello']
+    assert sub.recv_all() == []
+
+    pub.send('world')
+    time.sleep(0.1)
+    assert sub.recv_all() == ['world']
+    assert sub.recv_all() == []
 
 
-class TestMultiplePublishers(unittest.TestCase):
-    def test_multiplePublishers(self):
-        pupper = puppy.Puppy()
+def test_parenting():
+    pupper = puppy.Puppy()
 
-        pub1 = pupper.Pub('topic1')
-        pub2 = pupper.Pub('topic1')
-        sub = pupper.SubPull('topic1')
+    pub = pupper.Pub('topic1')
+    subC = pupper.SubPull('topic1')
+    subP = pupper.SubPull('')
 
-        pub1.send('hello')
-        pub2.send('world')
-        time.sleep(0.1)
-        self.assertEqual(sub.recv_all(), ['hello','world'])
-        self.assertEqual(sub.recv_all(), [])
+    pub.send('hello')
+    pub.send('world')
+    time.sleep(0.1)
+    assert subC.recv_all() == ['hello', 'world']
+    assert subP.recv_all() == ['hello', 'world']
+    assert subC.recv_all() == []
+    assert subP.recv_all() == []
 
-class TestMultipleSubscribers(unittest.TestCase):
-    def test_multipleSubscribers(self):
-        pupper = puppy.Puppy()
+def test_multiple_children():
+    pupper = puppy.Puppy()
 
-        pub = pupper.Pub('topic1')
-        sub1 = pupper.SubPull('topic1')
-        sub2 = pupper.SubPull('topic1')
+    pub1 = pupper.Pub('topic1')
+    pub2 = pupper.Pub('topic2')
 
-        pub.send('hello')
-        time.sleep(0.1)
+    subC1 = pupper.SubPull('topic1')
+    subC2 = pupper.SubPull('topic2')
+    subP = pupper.SubPull('')
 
-        self.assertEqual(sub1.recv_all(), ['hello'])
-        self.assertEqual(sub1.recv_all(), [])
+    pub1.send('hello-1')
+    pub1.send('world-1')
+    pub2.send('hello-2')
+    pub2.send('world-2')
+    time.sleep(0.1)
+    assert subC1.recv_all() == ['hello-1', 'world-1']
+    assert subC1.recv_all() == []
 
-        self.assertEqual(sub2.recv_all(), ['hello'])
-        self.assertEqual(sub2.recv_all(), [])
+    assert subC2.recv_all() == ['hello-2', 'world-2']
+    assert subC2.recv_all() == []
+
+    assert subP.recv_all() == ['hello-1', 'world-1', 'hello-2', 'world-2']
+    assert subP.recv_all() == []
+
+
+def test_multiplePublishers():
+    pupper = puppy.Puppy()
+
+    pub1 = pupper.Pub('topic1')
+    pub2 = pupper.Pub('topic1')
+    sub = pupper.SubPull('topic1')
+
+    pub1.send('hello')
+    pub2.send('world')
+    time.sleep(0.1)
+    assert sub.recv_all() == ['hello', 'world']
+    assert sub.recv_all() == []
+
+def test_multipleSubscribers():
+    pupper = puppy.Puppy()
+
+    pub = pupper.Pub('topic1')
+    sub1 = pupper.SubPull('topic1')
+    sub2 = pupper.SubPull('topic1')
+
+    pub.send('hello')
+    time.sleep(0.1)
+
+    assert sub1.recv_all() == ['hello']
+    assert sub1.recv_all() == []
+
+    assert sub2.recv_all() == ['hello']
+    assert sub2.recv_all() == []
 
 
 class Latch(object):
@@ -115,51 +108,40 @@ class Latch(object):
     def set(self, e):
         self.value = e
 
-class TestPushSubscribe(unittest.TestCase):
-    def test_push_subscribe(self):
-        pupper = puppy.Puppy()
 
-        latch = Latch()
+def test_push_subscribe():
+    pupper = puppy.Puppy()
 
-        pub = pupper.Pub('topic1')
+    latch = Latch()
 
-        pupper.SubPush('topic1', latch.set)
+    pub = pupper.Pub('topic1')
 
-        self.assertEqual(latch.value, None)
-        pub.send('hello')
-        time.sleep(0.1)
-        self.assertEqual(latch.value, 'hello')
-        pub.send('world')
-        time.sleep(0.1)
-        self.assertEqual(latch.value, 'world')
+    pupper.SubPush('topic1', latch.set)
 
-class TestFilter(unittest.TestCase):
-    def test_filter(self):
-        pupper = puppy.Puppy()
+    assert latch.value == None
+    pub.send('hello')
+    time.sleep(0.1)
+    assert latch.value == 'hello'
+    pub.send('world')
+    time.sleep(0.1)
+    assert latch.value == 'world'
 
-        pub = pupper.Pub('topic1')
+def test_filter():
+    pupper = puppy.Puppy()
 
-        sub = pupper.SubPull('topic1',
-                             filter=lambda i: i[2] == 'c')
+    pub = pupper.Pub('topic1')
 
-        pub.send('ab')
-        pub.send('abc')
-        pub.send('abd')
-        pub.send('abcd')
-        time.sleep(0.1)
-        self.assertEqual(sub.recv_all(), ['abc', 'abcd'])
+    sub = pupper.SubPull('topic1',
+                         filter=lambda i: i[2] == 'c')
 
-
-class TestVerify(unittest.TestCase):
-    def test_verify(self):
-        pupper = puppy.Puppy()
-        pupper.verify()
+    pub.send('ab')
+    pub.send('abc')
+    pub.send('abd')
+    pub.send('abcd')
+    time.sleep(0.1)
+    assert sub.recv_all() == ['abc', 'abcd']
 
 
-
-def load_tests(loader, tests, ignore):
-    tests.addTests(doctest.DocTestSuite(puppy))
-    return tests
-
-if __name__ == '__main__':
-    unittest.main()
+def test_verify():
+    pupper = puppy.Puppy()
+    pupper.verify()
