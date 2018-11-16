@@ -1,13 +1,13 @@
 language: python
+
 python:
   - "3.4"
   - "3.5"
   - "3.6"
   - "3.7-dev"
 
-script: pipenv run coverage run puppy/test_puppy.py
+script: pipenv run pytest -vv
+
 install:
   pip install pipenv;
   pipenv install
-after_success:
-  codecov --token=
