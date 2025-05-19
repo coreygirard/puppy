@@ -6,8 +6,12 @@ name = "pypi"
 [packages]
 codecov = "*"
 coverage = "*"
+certifi = "*"
+idna = "*"
+urllib3 = "*"
+requests = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3.9"
